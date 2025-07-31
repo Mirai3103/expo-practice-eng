@@ -1,24 +1,48 @@
-import { forwardRef } from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import React from 'react';
+import { Text, Pressable } from 'react-native';
+import theme from '~/theme';
+import { cn } from '~/utils/tailwind';
 
-type ButtonProps = {
+interface CustomButtonProps {
   title: string;
-} & TouchableOpacityProps;
+  onPress: () => void;
+  type?: 'fill' | 'outline' | 'link';
+  disabled?: boolean;
+  style?: any; // changed from ViewStyle to any for compatibility
+}
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
-  return (
-    <TouchableOpacity
-      ref={ref}
-      {...touchableProps}
-      className={`${styles.button} ${touchableProps.className}`}>
-      <Text className={styles.buttonText}>{title}</Text>
-    </TouchableOpacity>
+export const CustomButton: React.FC<CustomButtonProps> = ({
+  title,
+  onPress,
+  type = 'fill',
+  disabled = false,
+  style,
+}) => {
+  const buttonClass = cn(
+    'flex-row items-center justify-center rounded-full active:bg-brand-orange100 active:text-gray-white',
+    type === 'fill' && [disabled ? 'bg-gray disabled:opacity-60' : 'bg-brand-orange100 active:bg-brand-orange100', 'py-4 px-6'],
+    type === 'outline' && [
+      'bg-transparent border border-solid',
+      disabled ? 'border-gray' : 'border-brand-orange100',
+      'py-4 px-6',
+    ],
+    type === 'link' && 'bg-transparent py-2 px-1'
   );
-});
 
-Button.displayName = 'Button';
+  const textClass = cn(
+    'text-[16px] font-semibold font-[PlusJakartaSans_600SemiBold]',
+    type === 'fill' && 'text-gray-white',
+    (type === 'outline' || type === 'link') && (disabled ? 'text-gray' : 'text-brand-orange100')
+  );
 
-const styles = {
-  button: 'items-center bg-indigo-500 rounded-[28px] shadow-md p-4',
-  buttonText: 'text-white text-lg font-semibold text-center',
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      className={buttonClass}
+      style={style}
+    >
+      <Text className={textClass}>{title}</Text>
+    </Pressable>
+  );
 };
