@@ -10,7 +10,7 @@ import { Question } from '~/types';
 export interface IPart2Question {
   id: number;
   index: number;
-  onAnswer: (answer: number) => void;
+  onAnswer: (questionId: number, answerId: number) => void;
   isPractice: boolean;
   isShowAnswer?: boolean;
   isAutoPlay?: boolean;
@@ -30,7 +30,7 @@ export default function Part2Card({
 }: IPart2Question) {
   
   const handleAnswerSelect = (answerKey: number) => {
-    onAnswer(answerKey);
+    onAnswer(question.id, answerKey);
   };
 
   const getAnswerKey = (index: number): string => {

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams } from 'expo-router';
+import {  useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ArrowLeft,
   Clock,
@@ -34,7 +34,7 @@ export default function PracticeScreen() {
     id,
     questionCount = '5',
   } = useLocalSearchParams<{ type: string; id: string; questionCount?: string }>();
-
+const router = useRouter()
   // Get all state and actions from the Zustand store
   const {
     questions,
@@ -63,45 +63,34 @@ export default function PracticeScreen() {
   }, [id, questionCount, fetchQuestions, resetQuiz]);
 
   const currentQuestion = questions[currentQuestionIndex];
-  const currentAnswer = answerSheet[currentQuestionIndex];
-
+  const currentAnswer =React.useMemo(()=> answerSheet.find((a) => a.questionId == currentQuestion.id),[answerSheet,currentQuestion])
   // Memoize derived data to avoid unnecessary recalculations
-  const { score, answeredCount, progress } = useMemo(() => {
-    const answeredCount = answerSheet.filter((a) => a.answerId !== undefined).length;
-    const progress =
-      questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
-
-    let correct = 0;
-    if (showResults) {
-      answerSheet.forEach((answer) => {
-        const question = questions.find((q) => q.id === answer.questionId);
-        if (question?.question_choices.find((c) => c.id === answer.answerId)?.is_correct) {
-          correct++;
-        }
-      });
-    }
-
-    const score = {
-      correct,
-      total: questions.length,
-      percentage: questions.length > 0 ? Math.round((correct / questions.length) * 100) : 0,
+  const progress = React.useMemo(()=>{
+    const answeredCount = answerSheet.filter((a) => a.correctAnswer != undefined && a.answerId != undefined).length   
+    const totalCount = answerSheet.filter((a) => a.correctAnswer != undefined).length    
+    return answeredCount /totalCount * 100
+  },[answerSheet])
+  const { score, answeredCount,totalCount } = useMemo(() => {
+    const answeredCount = answerSheet.filter((a) => a.answerId != undefined && a.correctAnswer != undefined).length;
+    const totalCount = answerSheet.length;
+    const correctCount = answerSheet.filter((a) => a.correctAnswer == a.answerId && a.correctAnswer != undefined).length;
+    return {
+      answeredCount,
+      totalCount,
+      score: {
+        correct: correctCount,
+        total: answeredCount,
+        percentage: answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0,
+      }
     };
+  }, [answerSheet]);
 
-    return { score, answeredCount, progress };
-  }, [answerSheet, currentQuestionIndex, questions, showResults]);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+ 
 
   const handleSubmitConfirmation = () => {
-    Alert.alert('Nộp bài kiểm tra', 'Bạn có chắc chắn muốn nộp bài không?', [
-      { text: 'Hủy', style: 'cancel' },
-      { text: 'Nộp bài', onPress: submitQuiz },
-    ]);
+    submitQuiz()
   };
+  console.log(showResults);
 
   // --- RENDER LOGIC ---
 
@@ -116,7 +105,6 @@ export default function PracticeScreen() {
   if (showResults) {
     return (
       <View className="flex-1 bg-slate-50">
-        <StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
         <View className="overflow-hidden rounded-b-3xl shadow-lg">
           <LinearGradient
             colors={type === 'listening' ? ['#3b82f6', '#8b5cf6'] : ['#34d399', '#10b981']}
@@ -171,7 +159,9 @@ export default function PracticeScreen() {
               style={{ borderRadius: 16 }}
               className="flex-row items-center justify-center rounded-2xl py-4">
               <RotateCcw size={24} color="#ffffff" />
-              <Text className="ml-3 text-lg font-bold text-white">Làm lại</Text>
+              <Text className="ml-3 text-lg font-bold text-white">
+                Quay lại
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
         </ScrollView>
@@ -205,7 +195,7 @@ export default function PracticeScreen() {
               </View>
             </View>
             <Text className="text-xs font-medium text-slate-400">
-              {answeredCount}/{questions.length}
+              {answeredCount}/{totalCount}
             </Text>
           </View>
         </View>
@@ -279,7 +269,7 @@ export default function PracticeScreen() {
             </Text>
           </TouchableOpacity>
 
-          {!currentAnswer.isDone ? (
+          {!currentAnswer?.isDone ? (
             <TouchableOpacity onPress={markQuestionAsDone} className="rounded-xl shadow-lg">
               <LinearGradient
                 colors={['#3b82f6', '#1d4ed8']}
@@ -306,7 +296,9 @@ export default function PracticeScreen() {
                 style={{ borderRadius: 16 }}
                 className="flex-row items-center rounded-xl px-8 py-3">
                 <Trophy size={20} color="#ffffff" />
-                <Text className="ml-2 font-bold text-white">Nộp bài</Text>
+                <Text className="ml-2 font-bold text-white">
+                  Kết thúc
+                </Text>
               </LinearGradient>
             </TouchableOpacity>
           )}

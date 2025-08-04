@@ -22,4 +22,5 @@ export interface QuestionChoice {
     questionId: number;
     answerId?: number;
     isDone: boolean;
+    correctAnswer?: number;
   }

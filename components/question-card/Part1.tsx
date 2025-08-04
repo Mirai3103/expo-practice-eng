@@ -17,7 +17,7 @@ import { Question } from '~/types';
 export interface IPart1Question {
   id: number;
   index: number;
-  onAnswer: (answer: number) => void;
+  onAnswer: (questionId: number, answerId: number) => void;
   question: Question;
   isPractice: boolean;
   isShowAnswer?: boolean;
@@ -38,8 +38,9 @@ export default function Part1Card({
 }: IPart1Question) {
 
   const handleAnswerSelect = (answerKey: number) => {
-    onAnswer(answerKey);
+    onAnswer(question.id, answerKey);
   };
+  console.log(answerSheet);
 
   const getAnswerKey = (index: number): string => {
     return ['A', 'B', 'C', 'D'][index];

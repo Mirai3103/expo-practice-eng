@@ -12,7 +12,7 @@ export interface IPart3Question {
   answerSheet: Answer[];
   id: number;
   index: number;
-  onAnswer: (answer: number) => void;
+  onAnswer: (questionId: number, answer: number) => void;
   isPractice: boolean;
   isShowAnswer?: boolean;
   isAutoPlay?: boolean;
@@ -33,7 +33,7 @@ export default function Part3Card({
   const childQuestions = question.child_quests!; // part 3 is listen audio and answer 3 to 4 questions each question has 4 choices
 
   const handleAnswerSelect = (questionId: number, choiceId: number) => {
-    onAnswer(choiceId);
+    onAnswer(questionId, choiceId);
   };
 
   const getAnswerKey = (index: number): string => {
@@ -95,8 +95,8 @@ export default function Part3Card({
                     key={choice.id}
                     onPress={() => handleAnswerSelect(childQuestion.id, choice.id)}
                     className={cn(
-                      'flex-row items-center rounded-xl border-2 p-4',
-                      choiceIndex > 0 ? 'mt-3' : '',
+                      'flex-row items-center rounded-xl border-2 p-2',
+                      choiceIndex > 0 ? 'mt-2' : '',
                       isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-slate-50',
                       isShowAnswer && choice.is_correct ? 'border-green-500 bg-green-50' : '',
                       isShowAnswer && !choice.is_correct && isSelected ? 'border-red-500 bg-red-50' : ''
@@ -116,7 +116,7 @@ export default function Part3Card({
                       <Circle size={20} color="#94a3b8" />
                     )}
                     <View className="mx-4 flex-row items-center flex-1">
-                      <View
+                      {/* <View
                         className={cn(
                           'mr-3 h-8 w-8 items-center justify-center rounded-full',
                           isSelected ? 'bg-blue-500' : 'bg-slate-200',
@@ -129,7 +129,7 @@ export default function Part3Card({
                           }`}>
                           {answerKey}
                         </Text>
-                      </View>
+                      </View> */}
                       <Text 
                         className={cn(
                           'flex-1 text-sm',

@@ -5,68 +5,8 @@ import { create } from 'zustand';
 import { supabase } from '~/utils/supabase';
 import { Answer, Question } from '~/types/question';
 import { Image } from 'expo-image';
-import { FullQuestionView, QuestionChoice } from '~/types';
-const transformFullViewToQuestions = (rows: FullQuestionView[]): Question[] => {
-  // Nhóm theo question_id (cha)
-  const groupedByQuestion = _.groupBy(rows, 'question_id');
+import {  QuestionChoice } from '~/types';
 
-  const result: any[] = Object.values(groupedByQuestion).map((group) => {
-    const first = group[0];
-
-    // Lấy toàn bộ choices duy nhất
-    const question_choices = _.uniqBy(
-      group
-        .filter((r) => r.choice_id !== null)
-        .map((r) => ({
-          id: r.choice_id!,
-          choice_text: r.choice_text!,
-          index: r.choice_index,
-          is_correct: r.is_correct,
-          question_id: r.question_id,
-        })),
-      'id'
-    ) as any;
-    // Lấy toàn bộ child questions duy nhất
-    const child_quests: Question[] = _(group)
-      .filter((r) => r.child_id !== null)
-      .uniqBy('child_id')
-      .map((r) => ({
-        id: r.child_id,
-        content_text: r.child_content_text,
-        content_image_url: r.child_content_image_url,
-        content_audio_url: r.child_content_audio_url,
-        difficulty: r.child_difficulty,
-        explanation: r.child_explanation,
-        is_parent: r.child_is_parent,
-        parent_id: r.child_parent_id,
-        part_id: r.child_part_id,
-        source_id: r.child_source_id,
-        tags: r.child_tags || [],
-        question_choices: [], // bạn có thể join thêm choices cho child nếu cần
-        child_quests: null, // nếu muốn support nhiều tầng
-      }))
-      .value() as any;
-
-    // Trả về object dạng Question
-    return {
-      id: first.question_id,
-      content_text: first.question_content_text,
-      content_image_url: first.question_content_image_url,
-      content_audio_url: first.question_content_audio_url,
-      difficulty: first.question_difficulty,
-      explanation: first.question_explanation,
-      is_parent: first.question_is_parent,
-      parent_id: first.question_parent_id,
-      part_id: first.question_part_id,
-      source_id: first.question_source_id,
-      tags: first.question_tags || [],
-      question_choices,
-      child_quests: child_quests.length > 0 ? child_quests : null,
-    };
-  });
-
-  return result;
-};
 
 interface QuizState {
   questions: Question[];
@@ -79,7 +19,7 @@ interface QuizState {
 
   // Actions
   fetchQuestions: (partId: string, questionCount: string) => Promise<void>;
-  selectAnswer: (answerId: number) => void;
+  selectAnswer: (questionId: number, answerId: number) => void;
   markQuestionAsDone: () => void;
   nextQuestion: () => void;
   previousQuestion: () => void;
@@ -106,18 +46,24 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       const { data, error } = await supabase
         .from('random_questions_view')
         .select('*,question_choices(*), child_quests:questions(*,question_choices(*))')
+        .eq('part_id', Number(partId))
         .limit(Number(questionCount));
-      console.log(data?.[0]);
       if (error || !data) {
         throw new Error(error?.message || 'Failed to fetch questions');
       }
 
       // Prefetch images
       Image.prefetch(data.map((q) => q.content_image_url!).filter(Boolean));
+     let flatQuestions = _.flatMap(data, (q) => q.child_quests);
+     data.forEach((q) => {
+      flatQuestions.push(q as any);
+     });
 
+     const flatQuestionsWithAnswers = flatQuestions.map((q) => ({ questionId: q.id!, isDone: false, correctAnswer: q.question_choices.find((c) => c.is_correct)?.id }));
+     console.log({flatQuestionsWithAnswers})
       set({
         questions: data as Question[],
-        answerSheet: data.map((q) => ({ questionId: q.id!, isDone: false })),
+        answerSheet: flatQuestionsWithAnswers,
         isLoading: false,
         startAt: new Date(),
       });
@@ -128,11 +74,12 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   },
 
   // Handle selecting an answer for the current question
-  selectAnswer: (answerId) => {
+  selectAnswer: (questionId, answerId) => {
     set((state) => {
       const newAnswerSheet = [...state.answerSheet];
-      if (state.currentQuestionIndex < newAnswerSheet.length) {
-        newAnswerSheet[state.currentQuestionIndex].answerId = answerId;
+      const currentQuestion = newAnswerSheet.find((q) => q.questionId === questionId);
+      if (currentQuestion) {
+        currentQuestion.answerId = answerId;
       }
       return { answerSheet: newAnswerSheet };
     });
@@ -142,8 +89,9 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   markQuestionAsDone: () => {
     set((state) => {
       const newAnswerSheet = [...state.answerSheet];
-      if (state.currentQuestionIndex < newAnswerSheet.length) {
-        newAnswerSheet[state.currentQuestionIndex].isDone = true;
+      const currentQuestion = newAnswerSheet.find((q) => q.questionId === state.questions[state.currentQuestionIndex].id);
+      if (currentQuestion) {
+        currentQuestion.isDone = true;
       }
       return { answerSheet: newAnswerSheet };
     });

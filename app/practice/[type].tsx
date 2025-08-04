@@ -225,7 +225,7 @@ const getDifficultyStars = (difficulty: number) => {
 const PracticeCard = ({ part }: { part: PartData }) => {
   const IconComponent = part.icon;
   const [questionCount, setQuestionCount] = useState(2);
-  const questionOptions = [5, 10, 15, 20, 25, 30];
+  const questionOptions = [1,5, 10, 15, 20, 25, 30];
   
   const handleSliderChange = (value: number) => {
     setQuestionCount(Math.round(value));
@@ -272,47 +272,14 @@ const PracticeCard = ({ part }: { part: PartData }) => {
           </View>
         </View>
 
-        {/* Stats Row */}
-        <View className="mb-6 flex-row items-center justify-around rounded-2xl bg-slate-50 p-4">
-          <View className="items-center">
-            <View className="mb-2 flex-row items-center">
-              <Clock size={16} color="#64748b" />
-              <Text className="ml-1 text-xs font-semibold text-slate-500">Thời gian</Text>
-            </View>
-            <Text className="text-sm font-bold text-slate-800">{part.estimatedTime}</Text>
-          </View>
-          <View className="h-8 w-px bg-slate-200" />
-          <View className="items-center">
-            <View className="mb-2 flex-row items-center">
-              <Target size={16} color="#64748b" />
-              <Text className="ml-1 text-xs font-semibold text-slate-500">Độ khó</Text>
-            </View>
-            <View className="flex-row">
-              {getDifficultyStars(part.difficulty)}
-            </View>
-          </View>
-          <View className="h-8 w-px bg-slate-200" />
-          <View className="items-center">
-            <View className="mb-2 flex-row items-center">
-              <Trophy size={16} color="#64748b" />
-              <Text className="ml-1 text-xs font-semibold text-slate-500">Hoàn thành</Text>
-            </View>
-            <Text className="text-sm font-bold text-slate-800">{part.completedSessions}</Text>
-          </View>
-        </View>
+        
 
         {/* Progress Section */}
         <View className="mb-6">
-          <View className="mb-4 flex-row items-center justify-between">
-            <Text className="text-base font-bold text-slate-800">Tiến độ học tập</Text>
-            <View className="flex-row items-center rounded-full bg-green-50 px-3 py-1">
-              <TrendingUp size={14} color="#10B981" />
-              <Text className="ml-1 text-sm font-semibold text-green-700">+{part.progress}%</Text>
-            </View>
-          </View>
+         
 
           {/* Level Progress */}
-          <View className="flex-row items-center justify-between mb-4">
+          <View className="flex-row items-center justify-between mb-1">
             <View className="overflow-hidden rounded-full border-2 border-slate-200">
               <LinearGradient
                 colors={currentLevelStyle.gradientColors}
@@ -324,21 +291,7 @@ const PracticeCard = ({ part }: { part: PartData }) => {
                 </Text>
               </LinearGradient>
             </View>
-            
-            <View className="mx-4 flex-1">
-              <View className="mb-1 h-2 overflow-hidden rounded-full bg-slate-100">
-                <LinearGradient
-                  colors={part.accentColors}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={{ width: `${part.progress}%`, height: '100%' }}
-                />
-              </View>
-              <Text className="text-center text-xs font-medium text-slate-500">
-                {part.progress}% đến {part.targetLevel}
-              </Text>
-            </View>
-
+           
             <View className={`overflow-hidden rounded-full border-2 border-dashed ${targetLevelStyle.border} bg-slate-50`}>
               <View className="px-4 py-2">
                 <Text className="text-sm font-bold text-slate-400">
