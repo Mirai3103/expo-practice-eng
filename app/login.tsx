@@ -121,13 +121,10 @@ export default function LoginScreen() {
             colors={['#3b82f6', '#8b5cf6', '#ec4899']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="px-6 pb-16 pt-20">
+            className="px-6 pb-14 pt-14">
             
             {/* App Logo/Brand */}
             <View className="mb-8 items-center">
-              <View className="mb-6 h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-white/20 shadow-lg">
-                <Trophy size={48} color="#ffffff" />
-              </View>
               <Text className="mb-2 text-3xl font-bold text-white">TOEIC Quiz</Text>
               <Text className="text-lg text-white/80">Nâng cao kỹ năng tiếng Anh của bạn</Text>
             </View>
@@ -163,7 +160,7 @@ export default function LoginScreen() {
         </View>
 
         {/* Content Section */}
-        <View className="flex-1 px-6 pt-12">
+        <View className="flex-1 px-6 pt-6">
           {/* Welcome Text */}
           <View className="mb-12 items-center">
             <Text className="mb-3 text-2xl font-bold text-slate-800">Chào mừng bạn đến!</Text>

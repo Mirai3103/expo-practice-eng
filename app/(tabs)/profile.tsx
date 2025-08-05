@@ -21,10 +21,11 @@ import {
   Award,
 } from 'lucide-react-native';
 import { useAuth } from '~/hooks/useAuth';
+import { Image } from 'expo-image';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
-
+  console.log(user);
   const handleSignOut = () => {
     Alert.alert(
       'Đăng xuất',
@@ -77,11 +78,14 @@ export default function ProfileScreen() {
           colors={['#3b82f6', '#8b5cf6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          className="pb-8 pt-16">
+          className="pb-8 pt-10">
           
           <View className="items-center px-6">
             <View className="mb-4 h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-white/20 shadow-lg">
-              <User size={40} color="#ffffff" />
+              {/* <User size={40} color="#ffffff" /> */}
+              <Image source={{
+                uri:user?.user_metadata?.avatar_url,
+              }} contentFit="cover" style={{borderRadius:100,width:80,height:80}}/>
             </View>
             
             <Text className="mb-2 text-2xl font-bold text-white">
