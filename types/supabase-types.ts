@@ -20,18 +20,24 @@ export type Database = {
           id: number
           level_order: number | null
           name: string | null
+          range_from: number | null
+          range_to: number | null
         }
         Insert: {
           description?: string | null
           id?: number
           level_order?: number | null
           name?: string | null
+          range_from?: number | null
+          range_to?: number | null
         }
         Update: {
           description?: string | null
           id?: number
           level_order?: number | null
           name?: string | null
+          range_from?: number | null
+          range_to?: number | null
         }
         Relationships: []
       }
@@ -134,6 +140,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "hasChild"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hasChild"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "random_questions_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "questions_part_id_parts_id_fk"
             columns: ["part_id"]
             isOneToOne: false
@@ -203,6 +223,163 @@ export type Database = {
         }
         Relationships: []
       }
+      user_answers: {
+        Row: {
+          answer_time: string | null
+          id: string
+          is_correct: boolean
+          note: string | null
+          question_choice_id: number | null
+          question_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          answer_time?: string | null
+          id?: string
+          is_correct?: boolean
+          note?: string | null
+          question_choice_id?: number | null
+          question_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          answer_time?: string | null
+          id?: string
+          is_correct?: boolean
+          note?: string | null
+          question_choice_id?: number | null
+          question_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_answers_question_choice_id_question_choices_id_fk"
+            columns: ["question_choice_id"]
+            isOneToOne: false
+            referencedRelation: "question_choices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_answers_question_id_questions_id_fk"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_answers_question_id_questions_id_fk"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "random_questions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_answers_user_id_user_profiles_id_fk"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_processes: {
+        Row: {
+          current_level_id: number | null
+          expected_level_id: number | null
+          id: string
+          part_id: number | null
+          percent_completed: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          current_level_id?: number | null
+          expected_level_id?: number | null
+          id?: string
+          part_id?: number | null
+          percent_completed?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          current_level_id?: number | null
+          expected_level_id?: number | null
+          id?: string
+          part_id?: number | null
+          percent_completed?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_processes_current_level_id_levels_id_fk"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_processes_expected_level_id_levels_id_fk"
+            columns: ["expected_level_id"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_processes_part_id_parts_id_fk"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_processes_user_id_user_profiles_id_fk"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          current_level: number | null
+          expected_level: number | null
+          id: string
+          last_practice_date: string | null
+          streak_count: number
+        }
+        Insert: {
+          current_level?: number | null
+          expected_level?: number | null
+          id?: string
+          last_practice_date?: string | null
+          streak_count?: number
+        }
+        Update: {
+          current_level?: number | null
+          expected_level?: number | null
+          id?: string
+          last_practice_date?: string | null
+          streak_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_current_level_levels_id_fk"
+            columns: ["current_level"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_profiles_expected_level_levels_id_fk"
+            columns: ["expected_level"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       random_questions_view: {
@@ -210,30 +387,53 @@ export type Database = {
           content_audio_url: string | null
           content_image_url: string | null
           content_text: string | null
+          difficulty: string | null
           explanation: string | null
           id: number | null
           is_parent: number | null
+          parent_id: number | null
           part_id: number | null
+          tags: string[] | null
         }
         Insert: {
           content_audio_url?: string | null
           content_image_url?: string | null
           content_text?: string | null
+          difficulty?: string | null
           explanation?: string | null
           id?: number | null
           is_parent?: number | null
+          parent_id?: number | null
           part_id?: number | null
+          tags?: string[] | null
         }
         Update: {
           content_audio_url?: string | null
           content_image_url?: string | null
           content_text?: string | null
+          difficulty?: string | null
           explanation?: string | null
           id?: number | null
           is_parent?: number | null
+          parent_id?: number | null
           part_id?: number | null
+          tags?: string[] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "hasChild"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hasChild"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "random_questions_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "questions_part_id_parts_id_fk"
             columns: ["part_id"]
@@ -245,7 +445,22 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_random_parent_questions: {
+        Args: Record<PropertyKey, never> | { part: number; limit_count: number }
+        Returns: {
+          content_audio_url: string | null
+          content_image_url: string | null
+          content_text: string | null
+          difficulty: string | null
+          explanation: string | null
+          id: number
+          is_parent: number
+          parent_id: number | null
+          part_id: number | null
+          source_id: string
+          tags: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

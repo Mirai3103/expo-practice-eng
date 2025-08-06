@@ -25,7 +25,6 @@ import { Image } from 'expo-image';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
-  console.log(user);
   const handleSignOut = () => {
     Alert.alert(
       'Đăng xuất',

@@ -31,7 +31,7 @@ export default function Part3Card({
   const audio = question.content_audio_url!; // always has audio
   const image = question.content_image_url; // sometimes question has image, sometimes not
   const childQuestions = question.child_quests!; // part 3 is listen audio and answer 3 to 4 questions each question has 4 choices
-
+  console.log(question.content_text)
   const handleAnswerSelect = (questionId: number, choiceId: number) => {
     onAnswer(questionId, choiceId);
   };

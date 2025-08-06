@@ -7,7 +7,7 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+  console.log('zzzz',isLoading);
   const segments = useSegments();
   const router = useRouter();
 
@@ -35,13 +35,14 @@ export function useAuth() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === '(tabs)';
+    const inAuthGroup = segments[0] === '(tabs)'||segments[0] === 'practice';
 
     if (!session && inAuthGroup) {
       // User is not signed in but trying to access protected routes
       router.replace('/login');
     } else if (session && !inAuthGroup) {
       // User is signed in but not in the main app
+      console.log('replacing');
       router.replace('/(tabs)');
     }
   }, [session, segments, isLoading]);
