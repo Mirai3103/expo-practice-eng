@@ -28,6 +28,8 @@ import { Part2Card } from '~/components/question-card';
 import Part3Card from '~/components/question-card/Part3';
 import { Part4Card } from '~/components/question-card/Past4';
 import Part5Card from '~/components/question-card/Past5';
+import Part6Card from '~/components/question-card/Part6';
+import { Part7Card } from '~/components/question-card/Past7';
 
 export default function PracticeScreen() {
   const {
@@ -252,6 +254,30 @@ const router = useRouter()
         )}
         {id == '5' && (
           <Part5Card
+            id={currentQuestion.id}
+            index={currentQuestionIndex + 1}
+            onAnswer={selectAnswer}
+            question={currentQuestion as Question}
+            answerSheet={answerSheet}
+            isPractice={true}
+            isShowAnswer={currentAnswer?.isDone}
+            isAutoPlay={true}
+          />
+        )}
+        {id == '6' && (
+          <Part6Card
+            id={currentQuestion.id}
+            index={currentQuestionIndex + 1}
+            onAnswer={selectAnswer}
+            question={currentQuestion as Question}
+            answerSheet={answerSheet}
+            isPractice={true}
+            isShowAnswer={currentAnswer?.isDone}
+            isAutoPlay={true}
+          />
+        )}
+        {id.startsWith('7') && (
+          <Part7Card
             id={currentQuestion.id}
             index={currentQuestionIndex + 1}
             onAnswer={selectAnswer}

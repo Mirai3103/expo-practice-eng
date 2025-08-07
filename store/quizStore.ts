@@ -155,6 +155,8 @@ export const useQuizStore = create<QuizState>((set, get) => ({
 
   // Stop the timer and show the results screen
   submitQuiz: () => {
+    const { answerSheet } = get();
+    console.log({ answerSheet });
     set({ showResults: true });
   },
 

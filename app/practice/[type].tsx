@@ -158,13 +158,41 @@ const skillsData: Record<string, SkillData> = {
         accentColors: ['#F97316', '#EA580C']
       },
       {
-        id: "7",
-        title: "Part 7: Reading Comprehension", 
-        description: "Đọc hiểu văn bản phức tạp và trả lời câu hỏi",
+        id: "71",
+        title: "Part 7-1: Single Passage", 
+        description: "Đọc hiểu văn bản đơn và trả lời câu hỏi",
         icon: BookOpen,
         currentLevel: "Beginner",
         targetLevel: "Intermediate",
         progress: 35,
+        estimatedTime: "30-40 phút",
+        difficulty: 4,
+        completedSessions: 6,
+        totalQuestions: 300,
+        accentColors: ['#F43F5E', '#E11D48']
+      },
+      {
+        id: "72",
+        title: "Part 7-2: Double Passages",
+        description: "Đọc hiểu văn bản kép và trả lời câu hỏi",
+        icon: BookOpen,
+        currentLevel: "Intermediate",
+        targetLevel: "Advanced",
+        progress: 45,
+        estimatedTime: "30-40 phút",
+        difficulty: 4,
+        completedSessions: 6,
+        totalQuestions: 300,
+        accentColors: ['#F43F5E', '#E11D48']
+      },
+      {
+        id: "73",
+        title: "Part 7-3: Triple Passages",
+        description: "Đọc hiểu văn bản ba và trả lời câu hỏi",
+        icon: BookOpen,
+        currentLevel: "Intermediate",
+        targetLevel: "Advanced",
+        progress: 45,
         estimatedTime: "30-40 phút",
         difficulty: 4,
         completedSessions: 6,
@@ -225,7 +253,7 @@ const getDifficultyStars = (difficulty: number) => {
 const PracticeCard = ({ part }: { part: PartData }) => {
   const IconComponent = part.icon;
   const [questionCount, setQuestionCount] = useState(2);
-  const questionOptions = [1,5, 10, 15, 20, 25, 30];
+  const questionOptions = [5, 10, 15, 20, 25, 30];
   
   const handleSliderChange = (value: number) => {
     setQuestionCount(Math.round(value));
